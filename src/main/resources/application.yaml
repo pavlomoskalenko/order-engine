@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: order-system
+  datasource:
+    username: order_user
+    password: order_user
+    url: jdbc:postgresql://localhost:5432/order_engine
+    driver-class-name: org.postgresql.Driver
+
+security:
+  jwt:
+    secret_key: ${JWT_SECRET_KEY}
+    access_token_expiration: 900000
+    refresh_token_expiration: 86400000
