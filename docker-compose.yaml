@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: order_user
+      POSTGRES_PASSWORD: order_user
+      POSTGRES_DB: order_engine
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: order-engine
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/order_engine
+      SPRING_DATASOURCE_USERNAME: order_user
+      SPRING_DATASOURCE_PASSWORD: order_user
+      JWT_SECRET_KEY: ufSS5XYLEW96wV5iyrhwg7x03RobBg4whHZ49F52Sx3
+      JAVA_TOOL_OPTIONS: >
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+
+volumes:
+  pgdata:

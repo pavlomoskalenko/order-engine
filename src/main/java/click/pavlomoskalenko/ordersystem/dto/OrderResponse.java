@@ -1,7 +1,6 @@
 package click.pavlomoskalenko.ordersystem.dto;
 
 import click.pavlomoskalenko.ordersystem.model.Order;
-import click.pavlomoskalenko.ordersystem.model.Product;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,14 +8,20 @@ import lombok.Setter;
 @Setter
 public class OrderResponse {
     private Long id;
-    private Product sellProduct;
-    private Product buyProduct;
-    private UserResponse owner;
+    private Long ownerId;
+    private Long sellProductId;
+    private int sellAmount;
+    private Long buyProductId;
+    private int buyAmount;
+    private String status;
 
     public OrderResponse(Order order) {
         this.id = order.getId();
-        this.sellProduct = order.getSellProduct();
-        this.buyProduct = order.getBuyProduct();
-        this.owner = new UserResponse(order.getOwner());
+        this.ownerId = order.getOwner().getId();
+        this.sellProductId = order.getSellProduct().getId();
+        this.sellAmount = order.getSellAmount();
+        this.buyProductId = order.getBuyProduct().getId();
+        this.buyAmount = order.getBuyAmount();
+        this.status = order.getStatus().toString();
     }
 }

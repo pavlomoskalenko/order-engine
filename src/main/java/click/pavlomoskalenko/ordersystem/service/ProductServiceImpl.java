@@ -1,9 +1,11 @@
 package click.pavlomoskalenko.ordersystem.service;
 
 import click.pavlomoskalenko.ordersystem.dao.ProductRepository;
-import click.pavlomoskalenko.ordersystem.model.Product;
+import click.pavlomoskalenko.ordersystem.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -12,7 +14,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public Product findProduct(String name) {
-        return productRepository.findProductByNameIgnoreCase(name).orElse(null);
+    public List<ProductResponse> findAll() {
+        return productRepository.findAll().stream()
+                .map(ProductResponse::new)
+                .toList();
     }
 }

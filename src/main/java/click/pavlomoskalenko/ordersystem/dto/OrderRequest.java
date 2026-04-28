@@ -13,8 +13,14 @@ import lombok.Setter;
 public class OrderRequest {
 
     @NotNull(message = "Sell product is required")
-    private ProductRequest sellProduct;
+    private Long sellProductId;
+
+    @NotNull(message = "Sell amount is required")
+    private Integer sellAmount;
 
     @NotNull(message = "Buy product is required")
-    private ProductRequest buyProduct;
+    private Long buyProductId;
+
+    @NotNull(message = "Buy amount is required")
+    private Integer buyAmount;
 }

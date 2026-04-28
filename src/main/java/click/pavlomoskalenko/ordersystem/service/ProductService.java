@@ -1,7 +1,9 @@
 package click.pavlomoskalenko.ordersystem.service;
 
-import click.pavlomoskalenko.ordersystem.model.Product;
+import click.pavlomoskalenko.ordersystem.dto.ProductResponse;
+
+import java.util.List;
 
 public interface ProductService {
-    Product findProduct(String name);
+    List<ProductResponse> findAll();
 }

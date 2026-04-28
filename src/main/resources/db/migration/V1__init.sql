@@ -6,10 +6,14 @@ CREATE SEQUENCE IF NOT EXISTS users_seq START WITH 1 INCREMENT BY 50;
 
 CREATE TABLE "order"
 (
-    id              BIGINT NOT NULL,
-    sell_product_id BIGINT NOT NULL,
-    buy_product_id  BIGINT NOT NULL,
-    user_id         BIGINT NOT NULL,
+    id                  BIGINT      NOT NULL,
+    sell_product_id     BIGINT      NOT NULL,
+    sell_product_amount INT         NOT NULL,
+    buy_product_id      BIGINT      NOT NULL,
+    buy_product_amount  INT         NOT NULL,
+    user_id             BIGINT      NOT NULL,
+    status              VARCHAR(32) NOT NULL,
+    created_at          TIMESTAMP   NOT NULL,
     CONSTRAINT pk_order PRIMARY KEY (id)
 );
 

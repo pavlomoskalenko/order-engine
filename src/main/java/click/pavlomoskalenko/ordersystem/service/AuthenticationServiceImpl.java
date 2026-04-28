@@ -2,6 +2,7 @@ package click.pavlomoskalenko.ordersystem.service;
 
 import click.pavlomoskalenko.ordersystem.dao.UserRepository;
 import click.pavlomoskalenko.ordersystem.dto.*;
+import click.pavlomoskalenko.ordersystem.exception.JwtTokenException;
 import click.pavlomoskalenko.ordersystem.exception.UserAlreadyExistsException;
 import click.pavlomoskalenko.ordersystem.exception.UserNotFoundException;
 import click.pavlomoskalenko.ordersystem.model.User;
@@ -55,7 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = refreshRequest.getRefreshToken();
 
         if (jwtService.hasTokenExpired(token)) {
-            throw new BadCredentialsException("Refresh token has expired");
+            throw new JwtTokenException("Refresh token has expired");
         }
 
         String username = jwtService.extractUsername(token);

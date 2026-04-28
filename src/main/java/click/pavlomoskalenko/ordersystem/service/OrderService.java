@@ -6,11 +6,8 @@ import click.pavlomoskalenko.ordersystem.dto.OrderResponse;
 import java.util.List;
 
 public interface OrderService {
-    List<OrderResponse> findAll();
-
-    OrderResponse findById(Long orderId);
-
+    List<OrderResponse> findAll(String userEmail);
+    OrderResponse findById(Long orderId, String userEmail);
     OrderResponse placeOrder(OrderRequest orderRequest, String userEmail);
-
     void deleteOrder(Long orderId, String userEmail);
 }

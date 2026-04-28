@@ -29,4 +29,5 @@ public class AuthenticationController {
     public TokenResponse refresh(@RequestBody @Valid RefreshRequest refreshRequest) {
         return authService.refresh(refreshRequest);
     }
+
 }

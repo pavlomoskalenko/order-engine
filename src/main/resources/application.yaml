@@ -2,9 +2,9 @@ spring:
   application:
     name: order-system
   datasource:
-    username: order_user
-    password: order_user
-    url: jdbc:postgresql://localhost:5432/order_engine
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
 
 security:

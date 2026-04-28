@@ -2,17 +2,15 @@ package click.pavlomoskalenko.ordersystem.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Immutable;
 
 @Entity
 @Table(name = "product")
-@Getter
 @Immutable
 @NoArgsConstructor(force = true)
-@RequiredArgsConstructor
+@Data
+@Setter(AccessLevel.NONE)
 public class Product {
 
     @Id

@@ -1,6 +1,7 @@
 package click.pavlomoskalenko.ordersystem.service;
 
 import click.pavlomoskalenko.ordersystem.dao.OrderRepository;
+import click.pavlomoskalenko.ordersystem.dao.ProductRepository;
 import click.pavlomoskalenko.ordersystem.dao.UserRepository;
 import click.pavlomoskalenko.ordersystem.dto.OrderRequest;
 import click.pavlomoskalenko.ordersystem.dto.OrderResponse;
@@ -9,8 +10,12 @@ import click.pavlomoskalenko.ordersystem.exception.UserNotFoundException;
 import click.pavlomoskalenko.ordersystem.model.Order;
 import click.pavlomoskalenko.ordersystem.model.Product;
 import click.pavlomoskalenko.ordersystem.model.User;
+import click.pavlomoskalenko.ordersystem.orderbook.OrderBook;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,36 +26,56 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
+    private final OrderBook orderBook;
 
     @Override
-    public List<OrderResponse> findAll() {
-        return orderRepository.findAll().stream().map(OrderResponse::new).toList();
+    @Transactional
+    public List<OrderResponse> findAll(String userEmail) {
+        return orderRepository.findAllByOwnerEmail(userEmail).stream()
+                .map(OrderResponse::new)
+                .toList();
     }
 
     @Override
-    public OrderResponse findById(Long orderId) {
-        return orderRepository.findById(orderId).map(OrderResponse::new).orElse(null);
-    }
-
-    @Override
-    public OrderResponse placeOrder(OrderRequest orderRequest, String userEmail) {
-        User owner = userRepository
-                .findUserByEmail(userEmail)
-                .orElseThrow(() -> new UserNotFoundException("User with such email doesn't exist"));
-        Product sellProduct =
-                productService.findProduct(orderRequest.getSellProduct().getName());
-        Product buyProduct =
-                productService.findProduct(orderRequest.getBuyProduct().getName());
-        if (sellProduct == null || buyProduct == null) {
-            throw new ProductNotFoundException("Product with such name doesn't exist");
+    @Transactional
+    public OrderResponse findById(Long orderId, String userEmail) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (order.isPresent()) {
+            User owner = order.get().getOwner();
+            if (userEmail.equals(owner.getEmail())) {
+                return new OrderResponse(order.get());
+            }
         }
 
-        Order order = new Order(sellProduct, buyProduct, owner);
-        return new OrderResponse(orderRepository.save(order));
+        return null;
     }
 
     @Override
+    @Transactional
+    public OrderResponse placeOrder(OrderRequest orderRequest, String userEmail) {
+        User owner = userRepository.findUserByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("User with such email doesn't exist"));
+        Product sellProduct = productRepository.findById(orderRequest.getSellProductId())
+                .orElseThrow(() -> new ProductNotFoundException("Product with such id doesn't exist"));
+        Product buyProduct = productRepository.findById(orderRequest.getBuyProductId())
+                .orElseThrow(() -> new ProductNotFoundException("Product with such id doesn't exist"));
+
+        Order order = orderRepository.save(
+                new Order(sellProduct, orderRequest.getSellAmount(), buyProduct, orderRequest.getBuyAmount(), owner));
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                orderBook.placeOrder(order);
+            }
+        });
+
+        return new OrderResponse(order);
+    }
+
+    @Override
+    @Transactional
     public void deleteOrder(Long orderId, String userEmail) {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isPresent()) {

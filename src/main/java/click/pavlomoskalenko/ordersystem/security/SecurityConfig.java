@@ -24,12 +24,13 @@ import java.util.Map;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(
                 auth -> auth
-                        //.requestMatchers(HttpMethod.POST, "/api/login", "/api/register", "/api/refresh").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/login", "/api/register", "/api/refresh").permitAll()
                         .anyRequest().permitAll());
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(Customizer.withDefaults()));
@@ -50,6 +51,7 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder(JwtService jwtService) {
         return (token) -> {
+            /* Test case with expired token, probably need to catch the exception and throw auth exception */
             Claims claims = jwtService.extractClaims(token);
 
             return new Jwt(
