@@ -8,9 +8,8 @@ import org.hibernate.annotations.Immutable;
 @Entity
 @Table(name = "product")
 @Immutable
+@Getter
 @NoArgsConstructor(force = true)
-@Data
-@Setter(AccessLevel.NONE)
 public class Product {
 
     @Id
