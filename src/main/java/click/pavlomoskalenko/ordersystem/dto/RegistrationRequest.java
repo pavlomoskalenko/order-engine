@@ -1,5 +1,6 @@
 package click.pavlomoskalenko.ordersystem.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RegistrationRequest {
 
+    @Email(message = "Email must be valid")
     @NotBlank(message = "Email is required")
     private String email;
 

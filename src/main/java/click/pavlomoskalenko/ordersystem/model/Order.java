@@ -54,7 +54,7 @@ public class Order {
     private final LocalDateTime createdAt = LocalDateTime.now();
 
     public enum OrderStatus {
-        NEW, RESOLVED
+        NEW, RESOLVED, CANCELED
     }
 
 }

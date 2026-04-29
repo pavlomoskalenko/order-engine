@@ -2,7 +2,9 @@ package click.pavlomoskalenko.ordersystem.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 
 @Entity
@@ -10,10 +12,12 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 @Getter
 @NoArgsConstructor(force = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank

@@ -9,5 +9,5 @@ public interface OrderService {
     List<OrderResponse> findAll(String userEmail);
     OrderResponse findById(Long orderId, String userEmail);
     OrderResponse placeOrder(OrderRequest orderRequest, String userEmail);
-    void deleteOrder(Long orderId, String userEmail);
+    OrderResponse cancelOrder(Long orderId, String userEmail);
 }

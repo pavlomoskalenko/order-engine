@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 @RestController
@@ -24,32 +25,28 @@ public class OrderController {
 
     @GetMapping
     public List<OrderResponse> getAllOrders(JwtAuthenticationToken token) {
-        String userEmail = token.getName();
-        return orderService.findAll(userEmail);
+        return orderService.findAll(token.getName());
     }
 
     @GetMapping("/{orderId}")
     public OrderResponse getOrder(@PathVariable Long orderId, JwtAuthenticationToken token) {
-        String userEmail = token.getName();
-        return orderService.findById(orderId, userEmail);
+        return orderService.findById(orderId, token.getName());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse placeOrder(@RequestBody @Valid OrderRequest orderRequest, JwtAuthenticationToken token) {
-        String userEmail = token.getName();
-        return orderService.placeOrder(orderRequest, userEmail);
+        return orderService.placeOrder(orderRequest, token.getName());
     }
 
-    @DeleteMapping("/{orderId}")
-    public void deleteOrder(@PathVariable Long orderId, JwtAuthenticationToken token) {
-        String userEmail = token.getName();
-        orderService.deleteOrder(orderId, userEmail);
+    @PatchMapping("/{orderId}")
+    public OrderResponse cancelOrder(@PathVariable Long orderId, JwtAuthenticationToken token) {
+        return orderService.cancelOrder(orderId, token.getName());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleAuthExceptions(UserNotFoundException ex, HttpServletRequest req) {
+    public ErrorResponse handleUserNotFound(UserNotFoundException ex, HttpServletRequest req) {
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())

@@ -31,5 +31,13 @@ services:
       JAVA_TOOL_OPTIONS: >
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
 
+  frontend:
+    build: ./frontend
+    container_name: order-engine-frontend
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+
 volumes:
   pgdata:

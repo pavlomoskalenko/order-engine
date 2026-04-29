@@ -5,6 +5,7 @@ import click.pavlomoskalenko.ordersystem.dao.ProductRepository;
 import click.pavlomoskalenko.ordersystem.dao.UserRepository;
 import click.pavlomoskalenko.ordersystem.dto.OrderRequest;
 import click.pavlomoskalenko.ordersystem.dto.OrderResponse;
+import click.pavlomoskalenko.ordersystem.exception.OrderNotFoundException;
 import click.pavlomoskalenko.ordersystem.exception.ProductNotFoundException;
 import click.pavlomoskalenko.ordersystem.exception.UserNotFoundException;
 import click.pavlomoskalenko.ordersystem.model.Order;
@@ -18,7 +19,6 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,15 +40,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponse findById(Long orderId, String userEmail) {
-        Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isPresent()) {
-            User owner = order.get().getOwner();
-            if (userEmail.equals(owner.getEmail())) {
-                return new OrderResponse(order.get());
-            }
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        if (!userEmail.equals(order.getOwner().getEmail())) {
+            throw new OrderNotFoundException("Order not found");
         }
-
-        return null;
+        return new OrderResponse(order);
     }
 
     @Override
@@ -76,13 +73,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void deleteOrder(Long orderId, String userEmail) {
-        Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isPresent()) {
-            User owner = order.get().getOwner();
-            if (userEmail.equals(owner.getEmail())) {
-                orderRepository.deleteById(orderId);
-            }
+    public OrderResponse cancelOrder(Long orderId, String userEmail) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        if (userEmail.equals(order.getOwner().getEmail())) {
+            order.setStatus(Order.OrderStatus.CANCELED);
         }
+
+        return new OrderResponse(order);
     }
+
 }

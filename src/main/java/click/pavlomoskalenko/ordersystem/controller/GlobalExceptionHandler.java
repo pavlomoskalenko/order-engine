@@ -2,6 +2,7 @@ package click.pavlomoskalenko.ordersystem.controller;
 
 import click.pavlomoskalenko.ordersystem.dto.ErrorResponse;
 import click.pavlomoskalenko.ordersystem.exception.JwtTokenException;
+import click.pavlomoskalenko.ordersystem.exception.OrderNotFoundException;
 import click.pavlomoskalenko.ordersystem.exception.ProductNotFoundException;
 import click.pavlomoskalenko.ordersystem.exception.UserAlreadyExistsException;
 import click.pavlomoskalenko.ordersystem.exception.UserNotFoundException;
@@ -50,34 +51,34 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserAlreadyExistsException.class)
     @ResponseStatus(CONFLICT)
     public ErrorResponse handleConflictExceptions(UserAlreadyExistsException ex) {
-        return buildErrorResponseEntity(CONFLICT, ex.getMessage());
+        return buildErrorResponse(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler({UserNotFoundException.class, BadCredentialsException.class})
     @ResponseStatus(UNAUTHORIZED)
     public ErrorResponse handleAuthExceptions() {
-        return buildErrorResponseEntity(UNAUTHORIZED, "Invalid username or password");
+        return buildErrorResponse(UNAUTHORIZED, "Invalid username or password");
     }
 
     @ExceptionHandler(JwtTokenException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleJwtExceptions(JwtTokenException ex) {
-        return buildErrorResponseEntity(BAD_REQUEST, ex.getMessage());
+        return buildErrorResponse(BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler({ProductNotFoundException.class, OrderNotFoundException.class})
     @ResponseStatus(NOT_FOUND)
-    public ErrorResponse handleNotFoundExceptions(ProductNotFoundException ex) {
-        return buildErrorResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage());
+    public ErrorResponse handleNotFoundExceptions(RuntimeException ex) {
+        return buildErrorResponse(NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnexpected() {
-        return buildErrorResponseEntity(INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        return buildErrorResponse(INTERNAL_SERVER_ERROR, "An unexpected error occurred");
     }
 
-    private ErrorResponse buildErrorResponseEntity(HttpStatus status, String message) {
+    private ErrorResponse buildErrorResponse(HttpStatus status, String message) {
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(status.value())

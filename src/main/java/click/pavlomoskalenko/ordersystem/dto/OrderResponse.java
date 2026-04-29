@@ -4,6 +4,8 @@ import click.pavlomoskalenko.ordersystem.model.Order;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class OrderResponse {
@@ -14,6 +16,7 @@ public class OrderResponse {
     private Long buyProductId;
     private int buyAmount;
     private String status;
+    private LocalDateTime createdAt;
 
     public OrderResponse(Order order) {
         this.id = order.getId();
@@ -23,5 +26,6 @@ public class OrderResponse {
         this.buyProductId = order.getBuyProduct().getId();
         this.buyAmount = order.getBuyAmount();
         this.status = order.getStatus().toString();
+        this.createdAt = order.getCreatedAt();
     }
 }
