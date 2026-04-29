@@ -6,7 +6,7 @@ plugins {
 
 group = 'click.pavlomoskalenko'
 version = '0.0.1-SNAPSHOT'
-description = 'order-system'
+description = 'order-engine'
 
 java {
     toolchain {
