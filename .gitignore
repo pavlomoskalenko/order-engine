@@ -38,3 +38,7 @@ out/
 
 ### Secrets ###
 .env
+
+### Frontend build output ###
+frontend/dist/
+frontend/node_modules/

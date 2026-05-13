@@ -1,1 +1,3 @@
 rootProject.name = 'order-engine'
+include('services:auth-service')
+include('services:order-service')
